@@ -140,8 +140,8 @@ fit_model = function(
 
     ## Plot validation and training loss
     history_plot = plot(history, smooth=F, theme_bw=F) +  
-        geom_line() + 
-        ylim(0.0025, 0.01) 
+        geom_line() #+ 
+        #ylim(0.0025, 0.01) 
 
 
     ## Plot predicted vs actual

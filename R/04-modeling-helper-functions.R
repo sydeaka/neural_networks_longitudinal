@@ -176,7 +176,8 @@ fit_model = function(
 
     print(history)
     
-    return(list(history=history, model=model))
+    return(list(history=history, model=model, 
+        plots=list(history_plot=history_plot, pred_plot=pred_plot)))
 
 
 }
@@ -226,7 +227,7 @@ random_fit = function(params=NULL, testing=FALSE, set_params=NULL) {
         random_params$look_back = look_back
     }
 
-    message('Using the following parameters:')
+    message('Fit a model with the following parameters:')
     print_params = random_params
     print_params$loss_weights = paste(print_params$loss_weights, collapse=', ')
     print_params %>% as.data.frame %>% print()

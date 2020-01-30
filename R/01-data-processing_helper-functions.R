@@ -16,10 +16,7 @@ apply_data_filters = function(dat) {
 
 
 # Find players with correct number of plate appearances
-# selected_player = 'abbotku01'
-
 get_player_years = function(selected_player) {
-  #cat(selected_player, '\n')
   player_dat = pa_filtered %>%
     filter(playerID == selected_player) %>%
     select(playerID, yearID, min_year, max_year, data_split) 
@@ -49,7 +46,8 @@ get_split = function(split_name) {
 
 
 
-# Get rolling window samples for each data split
+# Get rolling window samples for a specific player ID (selected_idx)
+# Returns  either the attributes (x) or the outcomes (y)
 get_samples_for_idx = function(dat, selected_idx, return_type = 'x', target_col_names=target_col_names) {
   ro = rolling_origin(data=dat %>% filter(idx == selected_idx), initial=look_back, assess=look_forward, cumulative=F, skip=0)
   ro_splits = ro$splits
@@ -69,7 +67,8 @@ get_samples_for_idx = function(dat, selected_idx, return_type = 'x', target_col_
 
 
 
-
+# Given a dataframe and specific set of target columnn names, get samples for individual player IDs
+# Gives both attributes and outcomes
 get_samples = function(dat_scaled, target_col_names=target_col_names) {
   df_name = eval(deparse(substitute(dat_scaled))) %>% gsub('(dat_)|(_scaled)', '', .)
   cat('Processing', df_name, '...')
@@ -109,57 +108,3 @@ get_samples = function(dat_scaled, target_col_names=target_col_names) {
 }
 
 
-
-wide_fmt = function(k, datx=train_x, daty=train_y) {
-    dimx = dim(datx)
-    dimy = dim(daty)
-
-    if (length(dimx) == 3) {
-        x = datx[k,,] 
-        colnames(x) = colnames(dat_train_scaled)[-1]
-    } else {
-        x = datx
-    }
-
-    if (length(dimy) == 2) {
-      if (nrow(daty) > 1) y = daty[k,] else y = daty
-    } else {
-        y = daty
-    }
-
-
-    
-
-    vals_y = y
-    vals_x = lapply(1:nrow(x), function(u) {
-        dt = x[u, ]
-        names(dt) = paste0('t', u, '_', names(dt))
-        dt
-    }) %>% unlist
-
-    out_names = gsub('Batting_', '', colnames(daty))
-    names(y) = out_names
-    vals = c(vals_x, y)
-    return(vals)
-}
-
-
-
-
-get_ols_dat = function(datx, daty) {
-    wide_dat_list = lapply(1:(dim(datx)[1]), function(k) wide_fmt(k, datx=datx, daty=daty))
-    wide_dat = sapply(wide_dat_list, function(u) u) %>% t %>% data.frame
-    return(wide_dat)
-} 
-
-
-
-
-get_ols_idx = function(idx_samples) {
-    wide_dat_list = lapply(1:length(idx_samples$x), function(k) {
-    wide_fmt(k, datx=idx_samples$x[[k]], daty=idx_samples$y[[k]])
-})
-
-    wide_dat = sapply(wide_dat_list, function(u) u) %>% t %>% data.frame
-    return(wide_dat)
-}

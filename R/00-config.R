@@ -7,7 +7,7 @@ install.packages('pacman')
 library(pacman)
 pacman::p_load(
     ## Needed for data pre-processing and modeling 
-    dplyr, tidyverse, readxl, padr, gridExtra, caret, #googledrive,
+    dplyr, tidyverse, readxl, padr, gridExtra, caret, tictoc, #googledrive,
 
     ## Data pre-processing only
     rsample, lubridate, fastDummies, Lahman , 

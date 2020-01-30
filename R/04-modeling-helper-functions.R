@@ -1,4 +1,6 @@
 message('Helper functions for modeling')
+
+## Fit a model with specified parameter values
 fit_model = function(
     training_df = NULL,
     num_dense_layers = 4,
@@ -183,7 +185,7 @@ fit_model = function(
 
 
 
-
+## Fit model using randomly selected parameters from a hyperparameter grid
 random_fit = function(params=NULL, testing=FALSE, set_params=NULL) {
     if (!is.null(set_params)) {
         message('Using specific parameters provided')
@@ -291,38 +293,3 @@ random_fit = function(params=NULL, testing=FALSE, set_params=NULL) {
     return(invisible(rtn))
 }
 
-
-
-
-vloss_rename = function(vname) {
-    out_name = gsub('_loss', '', vname)
-    out_name = gsub('val_output_', 'vloss_', out_name)
-    return(out_name)
-}
-
-
-
-
-
-
-
-leaderboard_preview = function (leader) {
-    if (length(target_col_names) > 1) {
-        loss_names = sapply(1:length(target_col_names), function(k) paste("val_output", 
-        k, "loss", sep = "_"))
-    } else {
-        loss_names = NULL
-    }
- 
-    out_tbl = leader %>% select_at( 
-        c("model_num", "val_loss", loss_names, "epoch_stop", "num_recurrent_layers", 
-        "num_dense_layers", "num_dense_units",  "lstm_nodes", 
-            "alpha", "learning_rate", "optimizer_name", "lr_reduce_factor", 
-            "batch_size", "lstm_dropout", "min_delta_lr", "outcomes")) 
-            
-    if (length(target_col_names) > 1) out_tbl = 
-        out_tbl %>% rename_if(startsWith(colnames(.), "val_output_"), vloss_rename) %>%
-        filter(num_epochs > 2) 
-        
-    out_tbl %>% head()
-}
